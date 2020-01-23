@@ -1,0 +1,170 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+// Type declarations
+typedef unsigned int u32;
+//Global Varible
+char *ctable = "0123456789abcdef";
+int BASE = 10;
+
+int rpu(u32 x);
+int print_u32(u32 x);
+int printu(u32 x);
+int prints(char *s);
+int printd(int x);
+int printx(u32 x);
+int printo(u32 x);
+int myprintf(char *fmt, ...);
+
+int main(int argc, char *argv[ ], char *env[ ]){
+  printf("***** testing prints *****\n");
+  char* test_str = "helasdfjdslf my name kyler";
+  prints(test_str);
+  printf(" == %s\n", test_str);
+
+  printf("***** testing printu *****\n");
+  u32 test_u32_1 = 234223, test_u32_2 = 0;
+  printu(test_u32_1);
+  printf(" == %u\n", test_u32_1);
+  printu(test_u32_2);
+  printf(" == %u\n", test_u32_2);
+
+  printf("***** testing printd *****\n");
+  int test_int1 = 234223, test_int2 = 0, test_int3 = -12398;
+  printd(test_int1);
+  printf(" == %d\n", test_int1);
+  printd(test_int2);
+  printf(" == %d\n", test_int2);
+  printd(test_int3);
+  printf(" == %d\n", test_int3);
+
+  printf("***** testing printx *****\n");
+  printx(test_u32_1);
+  printf(" == 0x%x\n", test_u32_1);
+  printx(test_u32_2);
+  printf(" == 0x%x\n", test_u32_2);
+
+  printf("***** testing printo *****\n");
+  printo(test_u32_1);
+  printf(" == 0%o\n", test_u32_1);
+  printo(test_u32_2);
+  printf(" == 0%o\n", test_u32_2);
+
+  printf("***** testing myprintf *****\n");
+  myprintf("%s == test_str\n", "test_str");
+  myprintf("hex: %x oct: %o u32: %u\n", 1, 2, 3);
+  myprintf("==\n");
+  printf("hex: 0x%x oct: 0%o u32: %u\n", 1, 2, 3);
+  myprintf("%c %c %c == l o l\n%s == lol\n", 'l','o','l', "lol");
+  printf("%c%c%c%c == char\n", 'c','h','a','r');
+  printf("exit main\n");
+}
+
+/*
+ * Recursive print unsigned (rpu).
+ */
+int rpu(u32 x)
+{
+  char c;
+  if (x){
+    c = ctable[x % BASE];
+    rpu(x / BASE);
+    putchar(c);
+  }
+}
+
+
+/*
+ * Print an unsigned 32 bit integer.
+ */
+int printu(u32 x)
+{
+  (x==0)? putchar('0') : rpu(x);
+  putchar(' ');
+}
+
+/*
+ * Prints character array terminated with null char (a string).
+ */
+int prints(char *s) {
+  while (*s) {  // while s doesn't point at null character
+    putchar(*s);
+    s++;  // increment pointer
+  }
+}
+
+/*
+ * Prints integer (note that x may be negative).
+ */
+int printd(int x) {
+  if (x < 0) {
+    x *= -1;    // negate
+    putchar('-');   // print negative sign
+  }
+  printu((u32)x);
+}
+
+/*
+ * Prints hexadecimal value for x (will start with "0x").
+ */
+int printx(u32 x) {
+  putchar('0'); putchar('x');   // prefix for hex
+  printu(x);
+}
+
+/*
+ * Prints octal value for x (will start with "0").
+ */
+int printo(u32 x) {
+  putchar('0');   // prefix for octal
+  print(x);
+}
+
+/*
+ * Same functionality as printf()
+ * Supports %c, %s, %u, %d, %o, and %x formatters
+ */
+int myprintf(char *fmt, ...) {
+  char *cp = fmt;  // point at format string
+  va_list ap;  // equivalent to *ip -- a ptr to first arg on stack
+  va_start(ap, fmt);  // point arg_pointer (ap) to first arg on stack
+  int arg;  // declare 32 bits to store the arg
+
+  while (*cp) {   // equivalent to while *cp != '\0'
+    if (*cp != '%') {
+      putchar(*cp);   // spit out any character that isn't a '%'
+      if (*cp == '\n') {  // for each '\n', spit out an extra '\r'
+	putchar('\r');
+      }
+    } else {
+      ++cp;  // advance char pointer to get char after '%'
+      arg = va_arg(ap, int);  // get value of arg on stack
+      switch(*cp) {   // switch on the format specifier
+      case 'c':
+	putchar((char)arg);
+	break;
+      case 's':
+	prints((char *)arg);
+	break;
+      case 'u':
+	printu((u32)arg);
+	break;
+      case 'd':
+	printd(arg);
+	break;
+      case 'o':
+	printo((u32)arg);
+	break;
+      case 'x':
+	printx((u32)arg);
+	break;
+      default:
+	printf("Can't handle format specification '%c'\n", *cp);
+	break;
+      }
+    }
+    ++cp;
+  }
+  va_end(ap);  // essentially, set arg pointer to null
+}
