@@ -1,9 +1,7 @@
 # CPTS360 --KCWang
 # Creating and build system by C/C++
-1. Fill in NAMEs,IDs. Send back to TA before 4-24-2020 to schedule DEMO time
-2. DEMO with TA at scheduled time AND submit a ZIP file of YOUR project to TA
-3. KCW will schedule interview time (via ZOOM) seperately AFTER you DEMO to TA
-4. Download disk1,disk2,disk3.1,disk3.2, dif2 from samples/PROJECT/ directory 
+
+Download disk1,disk2,disk3.1,disk3.2, dif2 from samples/PROJECT/ directory 
 
 LEVEL-1: Use disk1                                            55 %
    COMMANDS                    EXPECTED RESULTS           OBSERVED & comments
